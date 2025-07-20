@@ -1,65 +1,43 @@
 class Trie {
 
-    // Trie Node class
     class TrieNode {
-        TrieNode[] children = new TrieNode[26]; // for 26 lowercase letters
-        boolean isEndOfWord = false; // to mark end of a word
+        TrieNode[] children = new TrieNode[26];
+        boolean isEndOfWord = false;
     }
 
-    private TrieNode root;
+    private final TrieNode root;
 
     public Trie() {
         root = new TrieNode();
     }
 
-    // Inserts a word into the trie
     public void insert(String word) {
         TrieNode node = root;
-
         for (char c : word.toCharArray()) {
-            int index = c - 'a'; // map 'a'-'z' to 0-25
-
-            if (node.children[index] == null) {
-                node.children[index] = new TrieNode(); // create node if absent
-            }
-
-            node = node.children[index]; // move to next node
+            int i = c - 'a';
+            if (node.children[i] == null) node.children[i] = new TrieNode();
+            node = node.children[i];
         }
-
-        node.isEndOfWord = true; // mark end of the word
+        node.isEndOfWord = true;
     }
 
-    // Returns true if word is in the trie
-    public boolean search(String word) {
+    // ✅ Helper method to traverse prefix or word
+    private TrieNode searchPrefix(String prefix) {
         TrieNode node = root;
-
-        for (char c : word.toCharArray()) {
-            int index = c - 'a';
-
-            if (node.children[index] == null) {
-                return false; // letter path doesn't exist
-            }
-
-            node = node.children[index];
-        }
-
-        return node.isEndOfWord; // return true only if it's end of a word
-    }
-
-    // Returns true if any word in the trie starts with the given prefix
-    public boolean startsWith(String prefix) {
-        TrieNode node = root;
-
         for (char c : prefix.toCharArray()) {
-            int index = c - 'a';
-
-            if (node.children[index] == null) {
-                return false;
-            }
-
-            node = node.children[index];
+            int i = c - 'a';
+            if (node.children[i] == null) return null;
+            node = node.children[i];
         }
+        return node;
+    }
 
-        return true; // prefix path exists
+    public boolean search(String word) {
+        TrieNode node = searchPrefix(word);
+        return node != null && node.isEndOfWord;
+    }
+
+    public boolean startsWith(String prefix) {
+        return searchPrefix(prefix) != null;
     }
 }
