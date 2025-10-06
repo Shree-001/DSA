@@ -1,54 +1,39 @@
-import java.util.LinkedList;
-import java.util.Queue;
-
 class Solution {
     public int swimInWater(int[][] grid) {
-        int n = grid.length;
+        int m = grid.length, n = grid[0].length;
+        int[][] directions = {{0,1}, {1,0}, {0,-1}, {-1,0}};
         
-        for (int t = 0; t < n * n; t++) {
-            if (canReachDestination(grid, t)) {
-                return t;
-            }
+        int lo = grid[0][0], hi = 0;
+        for (int[] row : grid)
+            for (int val : row)
+                hi = Math.max(hi, val);
+        
+        while (lo < hi) {
+            int mid = lo + (hi - lo) / 2;
+            if (possible(grid, mid, m, n, directions)) hi = mid;
+            else lo = mid + 1;
         }
-        
-        return -1;
+        return lo;
     }
-
-    private boolean canReachDestination(int[][] grid, int t) {
-        int n = grid.length;
-
-        if (grid[0][0] > t) {
-            return false;
-        }
-
-        boolean[][] visited = new boolean[n][n];
-        Queue<int[]> queue = new LinkedList<>();
-
-        queue.offer(new int[]{0, 0});
-        visited[0][0] = true;
-
-        int[][] directions = {{-1, 0}, {1, 0}, {0, -1}, {0, 1}};
-
-        while (!queue.isEmpty()) {
-            int[] current = queue.poll();
-            int r = current[0];
-            int c = current[1];
-
-            if (r == n - 1 && c == n - 1) {
-                return true;
-            }
-
-            for (int[] dir : directions) {
-                int newR = r + dir[0];
-                int newC = c + dir[1];
-
-                if (newR >= 0 && newR < n && newC >= 0 && newC < n && !visited[newR][newC] && grid[newR][newC] <= t) {
-                    visited[newR][newC] = true;
-                    queue.offer(new int[]{newR, newC});
+    
+    private boolean possible(int[][] grid, int mid, int m, int n, int[][] directions) {
+        if (grid[0][0] > mid) return false;
+        boolean[][] seen = new boolean[m][n];
+        return dfs(grid, 0, 0, mid, seen, m, n, directions);
+    }
+    
+    private boolean dfs(int[][] grid, int r, int c, int mid, boolean[][] seen, int m, int n, int[][] directions) {
+        if (r == m-1 && c == n-1) return true;
+        seen[r][c] = true;
+        
+        for (int[] dir : directions) {
+            int nr = r + dir[0], nc = c + dir[1];
+            if (nr >= 0 && nr < m && nc >= 0 && nc < n && !seen[nr][nc]) {
+                if (grid[nr][nc] <= mid) {
+                    if (dfs(grid, nr, nc, mid, seen, m, n, directions)) return true;
                 }
             }
         }
-        
         return false;
     }
 }
