@@ -2,39 +2,37 @@ class Solution {
     public int candy(int[] r) {
         int n = r.length;
 
-        // Step 1: Give every child 1 candy
+        
         int[] c = new int[n];
-        for (int i = 0; i < n; i++) {
-            c[i] = 1;
-        }
-
-        boolean changed = true;
-
-        // Step 2: Keep fixing until no changes
-        while (changed) {
-            changed = false;
-
-            for (int i = 0; i < n; i++) {
+        Arrays.fill(c,1);
+        boolean f=true;
+        while(f)
+        {
+            f=false;
+         for (int i = 0; i < n; i++) {
 
                
                 if (i > 0 && r[i] > r[i - 1] && c[i] <= c[i - 1]) {
                     c[i] = c[i - 1] + 1;
-                    changed = true;
+                    f=true;
+                   
                 }
 
                 
                 if (i < n - 1 && r[i] > r[i + 1] && c[i] <= c[i + 1]) {
                     c[i] = c[i + 1] + 1;
-                    changed = true;
+                    f=true;
+                    
                 }
             }
         }
+        
 
-        int sum = 0;
-        for (int candy : c) {
-            sum += candy;
+        int s = 0;
+        for (int c1 : c) {
+            s+= c1;
         }
 
-        return sum;
+        return s;
     }
 }
