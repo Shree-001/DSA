@@ -1,5 +1,6 @@
 class Solution {
-    public boolean isPowerOfTwo(int n) {
-        return n>0 && (n&(n-1))==0;
+    public boolean isPowerOfTwo(int x) {
+ return (x>0 && (x & (x - 1))==0);
+        
     }
 }
